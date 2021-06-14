@@ -1,0 +1,11 @@
+sudo snap install chromium-ffmpeg
+sudo echo 'DPkg::Post-Invoke {"/usr/local/sbin/apt_opera_ffmpeg_upgrade_hook";};' > /etc/apt/apt.conf.d/80upgradehook
+sudo cat <<EOF >>/usr/local/sbin/apt_opera_ffmpeg_upgrade_hook
+#!/bin/bash
+set -e
+if [ ! -L /usr/lib/x86_64-linux-gnu/opera/libffmpeg.so ]; then
+        ffmpeg_path=$(ls -r /snap/chromium-ffmpeg/current/chromium-ffmpeg-*/chromium-ffmpeg/libffmpeg.so | head -n 1)
+        ln -fs $ffmpeg_path /usr/lib/x86_64-linux-gnu/opera/libffmpeg.so
+fi
+EOF
+sudo chmod +x /usr/local/sbin/apt_opera_ffmpeg_upgrade_hook
